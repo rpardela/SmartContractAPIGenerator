@@ -1,10 +1,10 @@
 /* 
-   Script generated automatically from the NPM smartcontract-api-module-generator package.
+   Script generated automatically from the NPM smartcontract-api-generator package.
 
    Used contract: ERC721demo
-   Package version: 0.6.0
+   Package version: 0.6.2
    API framework: ETHERS
-   Date of file generation: 11/18/2022, 2:35:45 PM
+   Date of file generation: 11/18/2022, 3:55:57 PM
 */ 
 
 import { ethers } from "ethers";
@@ -301,10 +301,10 @@ const safeMint = async (to,tokenId,uri) => {
 };
 
 // --------------------------------------------------------------------------------------
-//  Function ( nonpayable ): safeTransferFrom
+//  Function ( nonpayable ): safeTransferFrom_662
 //  Function duplicated. Oryginal function name: safeTransferFrom
 // --------------------------------------------------------------------------------------
-const safeTransferFrom_91 = async (from,to,tokenId) => {
+const safeTransferFrom_662 = async (from,to,tokenId) => {
   let function_result = "";
   let gasPrice = Math.round(await bcHttpProvider.getGasPrice() * config.gasPriceFactor);
   let estGas = await contract.estimateGas.safeTransferFrom(from,to,tokenId);
@@ -334,10 +334,10 @@ const safeTransferFrom_91 = async (from,to,tokenId) => {
 };
 
 // --------------------------------------------------------------------------------------
-//  Function ( nonpayable ): safeTransferFrom
+//  Function ( nonpayable ): safeTransferFrom_276
 //  Function duplicated. Oryginal function name: safeTransferFrom
 // --------------------------------------------------------------------------------------
-const safeTransferFrom_741 = async (from,to,tokenId,data) => {
+const safeTransferFrom_276 = async (from,to,tokenId,data) => {
   let function_result = "";
   let gasPrice = Math.round(await bcHttpProvider.getGasPrice() * config.gasPriceFactor);
   let estGas = await contract.estimateGas.safeTransferFrom(from,to,tokenId,data);
@@ -609,8 +609,8 @@ pause,
 paused,
 renounceOwnership,
 safeMint,
-safeTransferFrom_91,
-safeTransferFrom_741,
+safeTransferFrom_662,
+safeTransferFrom_276,
 setApprovalForAll,
 supportsInterface,
 symbol,

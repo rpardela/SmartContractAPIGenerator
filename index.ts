@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 
-let version = '0.6.0';
+let version = '0.6.2';
 let name = 'SmartContractAPIGenerator';
 
 enum PROVIDERS {
@@ -111,7 +111,7 @@ const generateAPIFile = (abi, scConfig: SmartContractConfig, bcConfig: BCNetwork
 const saveHeader = (cfg: GeneratorOptions, scCfg: SmartContractConfig) => {
     fs.appendFileSync(outputFileName,
         '/* \n'
-        + '   Script generated automatically from the NPM smartcontract-api-module-generator package.' + '\n\n'
+        + '   Script generated automatically from the NPM smartcontract-api-generator package.' + '\n\n'
         + '   Used contract: ' + scCfg.name + '\n'
         + '   Package version: ' + version + '\n'
         + '   API framework: ' + PROVIDERS[cfg.apiFramework] + '\n'        
@@ -166,21 +166,24 @@ const parmsToString = (_parms) => {
     return toRet.substring(0, toRet.length - 1);
 }
 
-const setFunctionHeader = (_name: string, _stateMutalibility: string, _duplicated: number, _parmsIn:[], _parmsOut:[]): string => {
+const setFunctionHeader = (_name: string, _stateMutalibility: string, _duplicated: number, _parmsIn:[], _parmsOut:[]): [string, string] => {
     let funcName = (_duplicated > 1)?_name + '_' + Math.floor(Math.random() * 1000) : _name;
     let scFunctionComment = 
         '\n// --------------------------------------------------------------------------------------\n' 
-        + '//  Function ( ' + _stateMutalibility + ' ): ' + _name + '\n'        
+        + '//  Function ( ' + _stateMutalibility + ' ): ' + funcName + '\n'        
     scFunctionComment += _duplicated > 1?'//  Function duplicated. Oryginal function name: ' + _name + '\n':'';
     scFunctionComment += '// --------------------------------------------------------------------------------------\n';
 
-    return scFunctionComment;
+    return [scFunctionComment, funcName];
 }
 
 const saveNoGasFunction = (_name: string, _stateMutalibility: string, _duplicated: number, _parmsIn:[], _parmsOut:[]) => {
-    let funcName = (_duplicated > 1)?_name + '_' + Math.floor(Math.random() * 1000) : _name;    
+    // let funcName = (_duplicated > 1)?_name + '_' + Math.floor(Math.random() * 1000) : _name;    
     let parmsIn = parmsToString(_parmsIn);
-    let scFunctionComment = setFunctionHeader(_name, _stateMutalibility, _duplicated, _parmsIn, _parmsOut);
+    let info = setFunctionHeader(_name, _stateMutalibility, _duplicated, _parmsIn, _parmsOut);
+
+    let scFunctionComment = info[0];
+    let funcName = info[1];
 
     let scFunctionStart = 
         'const ' + funcName + ' = (' + parmsIn + ') => {' + '\n';
@@ -208,9 +211,12 @@ const saveNoGasFunction = (_name: string, _stateMutalibility: string, _duplicate
 };
 
 const saveGasFunction = (_name: string, _stateMutalibility: string, _duplicated: number, _parmsIn:[], _parmsOut:[]) => {
-    let funcName = (_duplicated > 1)?_name + '_' + Math.floor(Math.random() * 1000) : _name;
+    // let funcName = (_duplicated > 1)?_name + '_' + Math.floor(Math.random() * 1000) : _name;
     let parmsIn = parmsToString(_parmsIn);
-    let scFunctionComment = setFunctionHeader(_name, _stateMutalibility, _duplicated, _parmsIn, _parmsOut);
+    let info = setFunctionHeader(_name, _stateMutalibility, _duplicated, _parmsIn, _parmsOut);
+
+    let scFunctionComment = info[0];
+    let funcName = info[1];
 
     let scFunctionStart = 
         'const ' + funcName + ' = async (' + parmsIn + ') => {' + '\n';
