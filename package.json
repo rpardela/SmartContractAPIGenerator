@@ -1,6 +1,6 @@
 {
   "name": "smartcontract-api-generator",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Smartcontract API Generator",
   "main": "./dist/index.js",
   "type": "module",
