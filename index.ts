@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 
-let version = '0.5.0';
+let version = '0.6.0';
 let name = 'SmartContractAPIGenerator';
 
 enum PROVIDERS {
@@ -9,8 +9,7 @@ enum PROVIDERS {
     WEB3
 }
 
-type GeneratorOptions = {
-    outputFileName: string;    
+type GeneratorOptions = {     
     apiFramework: PROVIDERS
     outputScriptsPath: string
 }
@@ -20,7 +19,6 @@ type SmartContractConfig = {
     abi: [];
     address: string;
     ownerPrivateKey: string;
-    ownerAccount: string;
 }
 
 type BCNetworkConfig = {
@@ -29,6 +27,7 @@ type BCNetworkConfig = {
     gasPriceFactor: number;
 }
 
+let outputFileName: string = '';
 let fileSuffix = '.' + Date.now() + '.js';
 let defaultOutputScriptsPath = './outputAPIFiles/';
 let defaultApiFramework = PROVIDERS.ETHERS;
@@ -46,14 +45,14 @@ const scAPIGenerator = (_scConfig: SmartContractConfig, _bcConfig: BCNetworkConf
     let cfg: GeneratorOptions = _options;
 
     cfg.apiFramework = (_options?.apiFramework) ? _options.apiFramework : defaultApiFramework
-    
+
     cfg.outputScriptsPath = (_options?.outputScriptsPath) ? _options.outputScriptsPath : defaultOutputScriptsPath
     if (!fs.existsSync(cfg.outputScriptsPath)) {
         fs.mkdirSync(cfg.outputScriptsPath);
     }
 
-    cfg.outputFileName = cfg.outputScriptsPath + _scConfig.name + '.api' + fileSuffix;
-    fs.rm(cfg.outputFileName, () => { }); // remove file if exists     
+    outputFileName = cfg.outputScriptsPath + _scConfig.name + '.api' + fileSuffix;
+    fs.rm(outputFileName, () => { }); // remove file if exists     
 
     
     
@@ -81,9 +80,9 @@ export default {
 const generateAPIFile = (abi, scConfig: SmartContractConfig, bcConfig: BCNetworkConfig, config: GeneratorOptions) => {
     saveHeader(config, scConfig);
     
-    fs.appendFileSync(config.outputFileName, 'import { ethers } from "ethers";' + '\n');
+    fs.appendFileSync(outputFileName, 'import { ethers } from "ethers";' + '\n');
 
-    saveApiConfig(scConfig, bcConfig, config, abi);
+    saveApiConfig(scConfig, bcConfig, abi);
     
 
     abi.map((el) => {
@@ -93,12 +92,12 @@ const generateAPIFile = (abi, scConfig: SmartContractConfig, bcConfig: BCNetwork
                 case 'view':
                 case 'pure':
                     // version without gas estimation
-                    saveNoGasFunction(el.name, el.stateMutability, duplicated, el.inputs, el.outputs, config.outputFileName);
+                    saveNoGasFunction(el.name, el.stateMutability, duplicated, el.inputs, el.outputs);
                     break;
                 case 'nonpayable':
                 case 'payable':
                     // version with gas estimation
-                    saveGasFunction(el.name, el.stateMutability, duplicated, el.inputs, el.outputs, config.outputFileName);
+                    saveGasFunction(el.name, el.stateMutability, duplicated, el.inputs, el.outputs);
                     break;
                 default:
                     break;
@@ -106,11 +105,11 @@ const generateAPIFile = (abi, scConfig: SmartContractConfig, bcConfig: BCNetwork
         }
     });
 
-    saveExportFunctions(config);
+    saveExportFunctions();
 }
 
 const saveHeader = (cfg: GeneratorOptions, scCfg: SmartContractConfig) => {
-    fs.appendFileSync(cfg.outputFileName,
+    fs.appendFileSync(outputFileName,
         '/* \n'
         + '   Script generated automatically from the NPM smartcontract-api-module-generator package.' + '\n\n'
         + '   Used contract: ' + scCfg.name + '\n'
@@ -121,41 +120,40 @@ const saveHeader = (cfg: GeneratorOptions, scCfg: SmartContractConfig) => {
     );
 }
 
-const saveExportFunctions = (cfg: GeneratorOptions) => {
-    fs.appendFileSync(cfg.outputFileName,
+const saveExportFunctions = () => {
+    fs.appendFileSync(outputFileName,
         '\nexport default {'
         + functionList.substring(0, functionList.length - 1)
         + '\n};'
     );
 }
 
-const saveApiConfig = (scConfig: SmartContractConfig, bcConfig: BCNetworkConfig, config: GeneratorOptions, abi: []) => {
+const saveApiConfig = (scConfig: SmartContractConfig, bcConfig: BCNetworkConfig, abi: []) => {
     let sFuncStart: string = 
     '\nconst config = {' + '\n'
     + '  bcRPCURL: "' + bcConfig.RPCURL + '",' + '\n'
     + '  gasLimitFactor: ' + bcConfig.gasLimitFactor + ',' + '\n'
     + '  gasPriceFactor: ' + bcConfig.gasPriceFactor + ',' + '\n'
     + '  contractAddress: "' + scConfig.address + '",' + '\n'
-    + '  ownerAccount: "' + scConfig.ownerAccount + '",' + '\n'
     + '  ownerPrivateKey: "' + scConfig.ownerPrivateKey + '"' + '\n'
     ;    
 
     let sFuncFinish: string = '}' + '\n'
 
-    fs.appendFileSync(config.outputFileName, sFuncStart);
-    fs.appendFileSync(config.outputFileName, sFuncFinish);
+    fs.appendFileSync(outputFileName, sFuncStart);
+    fs.appendFileSync(outputFileName, sFuncFinish);
 
     let sABI = '\const contractABI = ' + JSON.stringify(abi) + ';\n';
-    fs.appendFileSync(config.outputFileName, sABI);
+    fs.appendFileSync(outputFileName, sABI);
 
     let sHttpProvider = 'const bcHttpProvider = new ethers.providers.JsonRpcProvider("' + bcConfig.RPCURL + '");\n'
-    fs.appendFileSync(config.outputFileName, sHttpProvider);
+    fs.appendFileSync(outputFileName, sHttpProvider);
 
     let sWallet = 'const wallet = new ethers.Wallet("' + scConfig.ownerPrivateKey + '", bcHttpProvider' + ');\n';        
-    fs.appendFileSync(config.outputFileName, sWallet);
+    fs.appendFileSync(outputFileName, sWallet);
 
     let sContract = 'const contract = new ethers.Contract("' + scConfig.address + '", contractABI, wallet' + ');\n';        
-    fs.appendFileSync(config.outputFileName, sContract);
+    fs.appendFileSync(outputFileName, sContract);
 }
 
 const parmsToString = (_parms) => {
@@ -179,7 +177,7 @@ const setFunctionHeader = (_name: string, _stateMutalibility: string, _duplicate
     return scFunctionComment;
 }
 
-const saveNoGasFunction = (_name: string, _stateMutalibility: string, _duplicated: number, _parmsIn:[], _parmsOut:[], outputFileName: string) => {
+const saveNoGasFunction = (_name: string, _stateMutalibility: string, _duplicated: number, _parmsIn:[], _parmsOut:[]) => {
     let funcName = (_duplicated > 1)?_name + '_' + Math.floor(Math.random() * 1000) : _name;    
     let parmsIn = parmsToString(_parmsIn);
     let scFunctionComment = setFunctionHeader(_name, _stateMutalibility, _duplicated, _parmsIn, _parmsOut);
@@ -209,7 +207,7 @@ const saveNoGasFunction = (_name: string, _stateMutalibility: string, _duplicate
         functionList += '\n' + funcName + ',';
 };
 
-const saveGasFunction = (_name: string, _stateMutalibility: string, _duplicated: number, _parmsIn:[], _parmsOut:[], outputFileName: string) => {
+const saveGasFunction = (_name: string, _stateMutalibility: string, _duplicated: number, _parmsIn:[], _parmsOut:[]) => {
     let funcName = (_duplicated > 1)?_name + '_' + Math.floor(Math.random() * 1000) : _name;
     let parmsIn = parmsToString(_parmsIn);
     let scFunctionComment = setFunctionHeader(_name, _stateMutalibility, _duplicated, _parmsIn, _parmsOut);
