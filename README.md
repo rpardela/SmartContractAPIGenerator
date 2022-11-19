@@ -713,7 +713,25 @@ export default {
 };
 ```
 
+# <br> How to call the functions of the generated module?
+
+`import api_bc from './outputAPIFiles/ERC721demo.api.1668783357508.js'`
+
+```
+api_bc.burn('tokenid')
+  .then((ret) => {
+    console.log(ret);
+  })
+  .catch(err => {
+    console.error(err);
+  })
+```
+
 # <br>Problems
 
 This is the early version of the project and although it has been tested you are likely to encounter problems. <br>
 Let me know if you encounter any problems other than those described below or have ideas for changes to the module.
+
+# <br> Collaboration
+
+If you already have your public projects, have ideas for development and would like to develop this package then I encourage you to collaborate.

@@ -1,6 +1,6 @@
 {
   "name": "smartcontract-api-generator",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Smartcontract API Generator",
   "main": "./dist/index.js",
   "bin": "./dist/index.js",
@@ -43,7 +43,7 @@
     "husky": "^8.0.1",
     "prettier": "^2.7.1",
     "pretty-quick": "^3.1.3",
-    "smartcontract-api-generator": "^0.6.2",
+    "smartcontract-api-generator": "^0.6.3",
     "typescript": "^4.9.3",
     "unit-test-script-generator": "^1.1.1"
   }

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 
-let version = '0.6.3';
+let version = '0.6.4';
 let name = 'SmartContractAPIGenerator';
 
 enum PROVIDERS {
@@ -123,6 +123,12 @@ const saveHeader = (cfg: GeneratorOptions, scCfg: SmartContractConfig) => {
 const saveExportFunctions = () => {
     fs.appendFileSync(outputFileName,
         '\nexport default {'
+        + functionList.substring(0, functionList.length - 1)
+        + '\n};'
+    );
+
+    fs.appendFileSync(outputFileName,
+        '\nexport {'
         + functionList.substring(0, functionList.length - 1)
         + '\n};'
     );
