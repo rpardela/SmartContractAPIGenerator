@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 
-let version = '0.6.4';
+let version = '0.6.5';
 let name = 'SmartContractAPIGenerator';
 
 enum PROVIDERS {
@@ -69,6 +69,11 @@ export default {
     getVersion
 }
 
+export {
+    scAPIGenerator,
+    getVersion
+}
+
 
 /**
  * 
@@ -128,7 +133,7 @@ const saveExportFunctions = () => {
     );
 
     fs.appendFileSync(outputFileName,
-        '\nexport {'
+        '\n\nexport {'
         + functionList.substring(0, functionList.length - 1)
         + '\n};'
     );
