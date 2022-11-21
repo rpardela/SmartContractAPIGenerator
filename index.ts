@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 
-let version = '0.6.5';
+let version = '0.7.0';
 let name = 'SmartContractAPIGenerator';
 
 enum PROVIDERS {
@@ -180,10 +180,16 @@ const parmsToString = (_parms) => {
 const setFunctionHeader = (_name: string, _stateMutalibility: string, _duplicated: number, _parmsIn:[], _parmsOut:[]): [string, string] => {
     let funcName = (_duplicated > 1)?_name + '_' + Math.floor(Math.random() * 1000) : _name;
     let scFunctionComment = 
-        '\n// --------------------------------------------------------------------------------------\n' 
-        + '//  Function ( ' + _stateMutalibility + ' ): ' + funcName + '\n'        
-    scFunctionComment += _duplicated > 1?'//  Function duplicated. Oryginal function name: ' + _name + '\n':'';
-    scFunctionComment += '// --------------------------------------------------------------------------------------\n';
+        '\n/** \n' 
+        + ' *  Function ( ' + _stateMutalibility + ' ): ' + funcName + '\n'        
+    scFunctionComment += _duplicated > 1?' *  Function duplicated. Smartcontract function name: ' + _name + '\n':'';    
+    _parmsIn.map((param: any) => {
+        scFunctionComment += ' *  @param {' + param.type + '} ' + param.name + '\n';
+    });
+    _parmsOut.map((param: any) => {
+        scFunctionComment += ' *  @returns {Promise<' + param.type + '>} ' + '\n';
+    });
+    scFunctionComment += ' */\n';
 
     return [scFunctionComment, funcName];
 }

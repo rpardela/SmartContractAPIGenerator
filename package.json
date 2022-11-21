@@ -1,6 +1,6 @@
 {
   "name": "smartcontract-api-generator",
-  "version": "0.6.5",
+  "version": "0.7.0",
   "description": "Smartcontract API Generator",
   "main": "./dist/index.js",
   "bin": "./dist/index.js",
@@ -19,6 +19,7 @@
     "api",
     "ethers",
     "ethereum",
+    "hardhat",
     "blockchain",
     "solidity",
     "smartcontract",
