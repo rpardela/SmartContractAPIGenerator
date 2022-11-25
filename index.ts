@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 
-let version = '0.8.0';
+let version = '1.0.0';
 let name = 'SmartContractAPIGenerator';
 
 enum PROVIDERS {
@@ -15,10 +15,10 @@ enum CHAIN {
     Goerli,
     Kovan,
     Ropsten,
-    arbitrum,
-    polygonMainnet,
-    polygonTest,
-    xdai
+    ArbitrumRinkebyTestnet,
+    PolygonMainnet,
+    PolygonMumbai,
+    xDaiChain
 }
 
 type GeneratorOptions = {     
@@ -57,7 +57,7 @@ const scAPIGenerator = (_scConfig: SmartContractConfig, _bcConfig: BCNetworkConf
 
     let cfg: GeneratorOptions = _options;
 
-    cfg.apiFramework = (_options?.apiFramework) ? _options.apiFramework : defaultApiFramework
+    cfg.apiFramework = (_options?.apiFramework) ? Number(PROVIDERS[_options.apiFramework]) : defaultApiFramework
 
     cfg.outputScriptsPath = (_options?.outputScriptsPath) ? _options.outputScriptsPath : defaultOutputScriptsPath
     if (!fs.existsSync(cfg.outputScriptsPath)) {
@@ -150,13 +150,11 @@ const saveExportFunctions = () => {
 }
 
 const saveApiConfig = (config: GeneratorOptions, scConfig: SmartContractConfig, bcConfig: BCNetworkConfig, abi: []) => {
-    switch (config.apiFramework) {        
+    switch (config.apiFramework) {
         case PROVIDERS.WEB3:
-            console.log('web3');
             saveApiConfigWEB3(scConfig, bcConfig, abi);
             break;
         case PROVIDERS.ETHERS:
-            console.log('ethers');
         default:
             saveApiConfigETHERS(scConfig, bcConfig, abi);
             break;
@@ -199,17 +197,26 @@ const saveApiConfigWEB3 = (scConfig: SmartContractConfig, bcConfig: BCNetworkCon
       'let Web3;' +'\n'
     + 'let Tx;' +'\n'
     + 'let ethereumjs_common;' + '\n'
-    + '(async () => {' + '\n'
+    + '\n(async () => {' + '\n'
     + '  Web3 = await import("web3");' +'\n'
     + '  Tx = await import("@ethereumjs/tx").Transaction;' +'\n'
     + '  ethereumjs_common = await import("@ethereumjs/common");' + '\n'
     + '})();' + '\n';
-
-    let chain = 
-    'const Common = ethereumjs_common.default;' +'\n'
-    + 'const common = Common.custom(ethereumjs_common.CustomChain.PolygonMumbai);' +'\n';
-
     fs.appendFileSync(outputFileName, importWeb3);
+    
+    // ethereumjs_common.Chain
+    // ethereumjs_common.CustomChain
+
+    let setChain = 
+    '\nconst chain = "' + bcConfig.chain + '";' + '\n'
+    + 'const Common = ethereumjs_common.default;' +'\n'
+    + 'let common;' +'\n'
+    + '\nif (Object.values(ethereumjs_common.Chain).includes(chain)) {' +'\n'
+    +   '  common = Common.custom(ethereumjs_common.Chain[chain])' + '\n'
+    +   '} else if (ethereumjs_common.CustomChain[chain]) {' + '\n'
+    +   '  common = Common.custom(ethereumjs_common.CustomChain[chain])' + '\n'
+    + '}' + '\n';
+    fs.appendFileSync(outputFileName, setChain);
     
     let sFuncStart: string = 
     '\nconst config = {' + '\n'
@@ -269,13 +276,11 @@ const setFunctionHeader = (_name: string, _stateMutalibility: string, _duplicate
 }
 
 const saveNoGasFunction = (config: GeneratorOptions, _name: string, _stateMutability: string, _duplicated: number, _parmsIn:[], _parmsOut:[]) => {
-    switch (config.apiFramework) {        
+    switch (config.apiFramework) {
         case PROVIDERS.WEB3:
-            console.log('web3');
             saveNoGasFunctionWEB3(_name, _stateMutability, _duplicated, _parmsIn, _parmsOut)
             break;
         case PROVIDERS.ETHERS:
-            console.log('ethers');
         default:
             saveNoGasFunctionETHERS(_name, _stateMutability, _duplicated, _parmsIn, _parmsOut)
             break;
@@ -348,7 +353,7 @@ const saveNoGasFunctionWEB3 = (_name: string, _stateMutability: string, _duplica
 };
 
 const saveGasFunction = (config: GeneratorOptions, _name: string, _stateMutability: string, _duplicated: number, _parmsIn:[], _parmsOut:[]) => {
-    switch (config.apiFramework) {        
+    switch (config.apiFramework) {
         case PROVIDERS.WEB3:
             saveGasFunctionWEB3(_name, _stateMutability, _duplicated, _parmsIn, _parmsOut)
             break;
@@ -428,7 +433,7 @@ const saveGasFunctionWEB3 = (_name: string, _stateMutalibility: string, _duplica
     let scTransaction = 
         '\nconst txBuilder = contract.methods.' + _name + '(' + parmsIn + ');' + '\n'
         + 'const encodedTx = txBuilder.encodeABI();' + '\n'
-        + 'const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);'
+        + 'const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);' + '\n'
         + ' const rawTx = {' +'\n'
         + '   nonce: web3Provider.utils.toHex(count),' + '\n'
         + '   gasPrice: gasPrice,' + '\n'
@@ -437,9 +442,10 @@ const saveGasFunctionWEB3 = (_name: string, _stateMutalibility: string, _duplica
         //+ '   from: web3Provider.eth.defaultAccount'
         + '   to: config.contractAddress' + '\n'
         + ' };' + '\n'
-        + '\nconst tx = new Tx(rawTx);'
-        + '\nconst signedTx = tx.sign(config.ownerPrivateKey);'
-        + '\nconst serializedTx = signedTx.serialize();'
+        + '\nconst tx = new Tx(rawTx, { common });' + '\n'
+        + 'let privateKey = Buffer.from(config.ownerPrivateKey, "hex");' + '\n'
+        + 'const signedTx = tx.sign(privateKey);' + '\n'
+        + 'const serializedTx = signedTx.serialize();' + '\n'
 
         let scFunctionBody = 
         '\n  return new Promise((resolve, reject) => {' + '\n'

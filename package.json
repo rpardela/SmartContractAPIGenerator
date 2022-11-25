@@ -1,7 +1,7 @@
 {
   "name": "smartcontract-api-generator",
-  "version": "0.7.1",
-  "description": "Smartcontract API Generator",
+  "version": "1.0.0",
+  "description": "Smartcontract API generator allows you to generate a javascript library to interact with the smartcontract",
   "main": "./dist/index.js",
   "bin": "./dist/index.js",
   "type": "module",

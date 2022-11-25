@@ -1,10 +1,10 @@
 import fs from 'fs';
 import apiGen from './dist/index.js';//'smartcontract-api-generator'; // or in dev './dist/index.js'
 
-let contractABI = JSON.parse(fs.readFileSync('./assetsc.abi').toString());
+let contractABI = JSON.parse(fs.readFileSync('./erc721demo.abi').toString());
 
 apiGen.scAPIGenerator({
-    name: 'assetsc',
+    name: 'ERC721Demo',
     abi: contractABI,
     address: 'SetContractAddress',
     ownerPrivateKey: 'SetYourPrivateKey',
@@ -13,6 +13,6 @@ apiGen.scAPIGenerator({
     RPCURL: 'https://matic-mumbai.chainstacklabs.com',
     gasLimitFactor: 1.2,
     gasPriceFactor: 1.5,
-}, { apiFramework: 1 });
+}, {});// apiFramework: 'WEB3', 'ETHERS
 
 console.log(apiGen.getVersion());

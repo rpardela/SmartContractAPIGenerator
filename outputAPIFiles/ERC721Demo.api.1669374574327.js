@@ -1,109 +1,11 @@
-# Description
-
-If you plan to interact with a smart contract you need an interface that will enable you to use the functions implemented in the smart contract in software.
-
-This package enables you to generate an API for the smart contract based on your ABI configuration.
-
-When you call the generator, you will get a complete library that allows you to interact with all the functions available in the smart contract.
-
-# <br> Prerequisites
-
-Currently, this package creates a module for the 'ethers.js' or 'web3.js' library. This means that you should have 'ethers' or 'web3' installed in your environment.
-
-# <br>Installation
-
-`npm i smartcontract-api-generator`
-
-# <br>Usage
-
-Create a new generator file (similar to the demo.js file presented in the following section), and then edit this file according to the list below.<br>
-
-1. Import the library:<br>
-   `import apiGen from 'smartcontract-api-generator'`
-
-2. Configure the generator:<br>
-   Get smartcontract's abi from file.
-   <br>
-   `let contractABI = JSON.parse(fs.readFileSync('./erc721demo.abi').toString());`
-   <br><br>
-   Set generator options
-   <br>
-
-   ```
-   apiGen.scAPIGenerator({
-    name: 'ERC721Demo',
-    abi: contractABI,
-    address: 'SetContractAddress',
-    ownerPrivateKey: 'SetYourPrivateKey',
-   }, {
-    chain: 'PolygonMumbai',
-    RPCURL: 'https://matic-mumbai.chainstacklabs.com',
-    gasLimitFactor: 1.2,
-    gasPriceFactor: 1.5,
-   }, {});
-   ```
-
-   **parameters:** <br>
-   Smartcontract configuration:<br>
-   _name_ - name of smartcontract.<br>
-   _abi_ - ABI file content (array)<br>
-   _address_ - address of smartcontract on the blockchain network<br>
-   _ownerPrivateKey_ - specify the private key of your account. You will need it for sign functions that change the state of the smart contract. If you have privacy concerns then you can insert any string here, and the correct value will be set in the generated API module (if you need it).<br>
-   <br>
-   Blockchain network configuration:<br>
-   _chain_ - The web3 library requires the inception of the Blockchain network on which smartcontract is deployed. Options available: Mainnet, Rinkeby, Goerli, Kovan, Ropsten, ArbitrumRinkebyTestnet, PolygonMainnet, PolygonMumbai, xDaiChain
-   _RPCURL_ - network address
-   _gasLimitFactor_ - you can set the multiplier for the limit of gas consumed for the smart contract function running. E.g., a value of 1.2 means increasing the maximum gas limit by 20% <br>
-   _gasPriceFactor_ - you can set the multiplier for the gas price, which will be used when the smart contract function is called. Increasing this parameter allows you to set a higher priotity for this transaction. E.g., a value of 1.5 means increasing the price of gas by 50%<br>
-   <br>**config** - You can specify an optional configuration as the third parameter of the call:<br>
-   _outputScriptsPath_ - path to the folder where the output scripts will be saved<br>
-   _apiFramework_ - A library that supports communication with the blockchain network. Available options: WEB3, ETHERS (default). Ensure that the selected library is installed in your environment<br>
-
-3. Run js file with test generator<br>
-   `node demo.js`
-
-   After running, you will get a new <smartcontract name>.api.<timestamp>.js file in the _outputScriptsPath_ directory
-
-# <br>Example
-
-The _demo.js_ file contains a sample call to the script generator that runs for the erc721demo.abi file (erc721 smartcontract).
-
-After running _demo.js_, a ./outputAPIFiles/ERC721demo.api.<timestamp>.js file will be generated
-
-Now you can use generated module in your projects.
-
-<br>**demo.js**
-
-```
-import fs from 'fs';
-import apiGen from 'smartcontract-api-generator'
-
-let contractABI = JSON.parse(fs.readFileSync('./erc721demo.abi').toString());
-
-apiGen.scAPIGenerator({
-    name: 'ERC721Demo',
-    abi: contractABI,
-    address: 'SetContractAddress',
-    ownerPrivateKey: 'SetYourPrivateKey',
-   }, {
-    chain: 'PolygonMumbai',
-    RPCURL: 'https://matic-mumbai.chainstacklabs.com',
-    gasLimitFactor: 1.2,
-    gasPriceFactor: 1.5,
-   }, {});
-```
-
-<br>**Result (generated script) for 'ethers' framework**
-
-```
-/*
+/* 
    Script generated automatically from the NPM smartcontract-api-generator package.
 
    Used contract: ERC721Demo
    Package version: 1.0.0
    API framework: ETHERS
    Date of file generation: 11/25/2022, 12:09:34 PM
-*/
+*/ 
 
 import { ethers } from "ethers";
 
@@ -119,7 +21,7 @@ const bcHttpProvider = new ethers.providers.JsonRpcProvider(config.bcRPCURL);
 const wallet = new ethers.Wallet(config.ownerPrivateKey, bcHttpProvider);
 const contract = new ethers.Contract(config.contractAddress, contractABI, wallet);
 
-/**
+/** 
  *  Function ( nonpayable ): approve
  *  @param { address } to
  *  @param { uint256 } tokenId
@@ -153,10 +55,10 @@ const approve = async (to,tokenId) => {
   return function_result;
 };
 
-/**
+/** 
  *  Function ( view ): balanceOf
  *  @param { address } owner
- *  @returns { Promise<uint256> }
+ *  @returns { Promise<uint256> } 
  */
 const balanceOf = (owner) => {
   return new Promise((resolve, reject) => {
@@ -172,7 +74,7 @@ const balanceOf = (owner) => {
   });
 };
 
-/**
+/** 
  *  Function ( nonpayable ): burn
  *  @param { uint256 } tokenId
  */
@@ -205,10 +107,10 @@ const burn = async (tokenId) => {
   return function_result;
 };
 
-/**
+/** 
  *  Function ( view ): getApproved
  *  @param { uint256 } tokenId
- *  @returns { Promise<address> }
+ *  @returns { Promise<address> } 
  */
 const getApproved = (tokenId) => {
   return new Promise((resolve, reject) => {
@@ -224,11 +126,11 @@ const getApproved = (tokenId) => {
   });
 };
 
-/**
+/** 
  *  Function ( view ): isApprovedForAll
  *  @param { address } owner
  *  @param { address } operator
- *  @returns { Promise<bool> }
+ *  @returns { Promise<bool> } 
  */
 const isApprovedForAll = (owner,operator) => {
   return new Promise((resolve, reject) => {
@@ -244,9 +146,9 @@ const isApprovedForAll = (owner,operator) => {
   });
 };
 
-/**
+/** 
  *  Function ( view ): name
- *  @returns { Promise<string> }
+ *  @returns { Promise<string> } 
  */
 const name = () => {
   return new Promise((resolve, reject) => {
@@ -262,9 +164,9 @@ const name = () => {
   });
 };
 
-/**
+/** 
  *  Function ( view ): owner
- *  @returns { Promise<address> }
+ *  @returns { Promise<address> } 
  */
 const owner = () => {
   return new Promise((resolve, reject) => {
@@ -280,10 +182,10 @@ const owner = () => {
   });
 };
 
-/**
+/** 
  *  Function ( view ): ownerOf
  *  @param { uint256 } tokenId
- *  @returns { Promise<address> }
+ *  @returns { Promise<address> } 
  */
 const ownerOf = (tokenId) => {
   return new Promise((resolve, reject) => {
@@ -299,7 +201,7 @@ const ownerOf = (tokenId) => {
   });
 };
 
-/**
+/** 
  *  Function ( nonpayable ): pause
  */
 const pause = async () => {
@@ -331,9 +233,9 @@ const pause = async () => {
   return function_result;
 };
 
-/**
+/** 
  *  Function ( view ): paused
- *  @returns { Promise<bool> }
+ *  @returns { Promise<bool> } 
  */
 const paused = () => {
   return new Promise((resolve, reject) => {
@@ -349,7 +251,7 @@ const paused = () => {
   });
 };
 
-/**
+/** 
  *  Function ( nonpayable ): renounceOwnership
  */
 const renounceOwnership = async () => {
@@ -381,7 +283,7 @@ const renounceOwnership = async () => {
   return function_result;
 };
 
-/**
+/** 
  *  Function ( nonpayable ): safeMint
  *  @param { address } to
  *  @param { uint256 } tokenId
@@ -416,7 +318,7 @@ const safeMint = async (to,tokenId,uri) => {
   return function_result;
 };
 
-/**
+/** 
  *  Function ( nonpayable ): safeTransferFrom_885
  *  Function duplicated. Smartcontract function name: safeTransferFrom
  *  @param { address } from
@@ -452,7 +354,7 @@ const safeTransferFrom_885 = async (from,to,tokenId) => {
   return function_result;
 };
 
-/**
+/** 
  *  Function ( nonpayable ): safeTransferFrom_403
  *  Function duplicated. Smartcontract function name: safeTransferFrom
  *  @param { address } from
@@ -489,7 +391,7 @@ const safeTransferFrom_403 = async (from,to,tokenId,data) => {
   return function_result;
 };
 
-/**
+/** 
  *  Function ( nonpayable ): setApprovalForAll
  *  @param { address } operator
  *  @param { bool } approved
@@ -523,10 +425,10 @@ const setApprovalForAll = async (operator,approved) => {
   return function_result;
 };
 
-/**
+/** 
  *  Function ( view ): supportsInterface
  *  @param { bytes4 } interfaceId
- *  @returns { Promise<bool> }
+ *  @returns { Promise<bool> } 
  */
 const supportsInterface = (interfaceId) => {
   return new Promise((resolve, reject) => {
@@ -542,9 +444,9 @@ const supportsInterface = (interfaceId) => {
   });
 };
 
-/**
+/** 
  *  Function ( view ): symbol
- *  @returns { Promise<string> }
+ *  @returns { Promise<string> } 
  */
 const symbol = () => {
   return new Promise((resolve, reject) => {
@@ -560,10 +462,10 @@ const symbol = () => {
   });
 };
 
-/**
+/** 
  *  Function ( view ): tokenByIndex
  *  @param { uint256 } index
- *  @returns { Promise<uint256> }
+ *  @returns { Promise<uint256> } 
  */
 const tokenByIndex = (index) => {
   return new Promise((resolve, reject) => {
@@ -579,11 +481,11 @@ const tokenByIndex = (index) => {
   });
 };
 
-/**
+/** 
  *  Function ( view ): tokenOfOwnerByIndex
  *  @param { address } owner
  *  @param { uint256 } index
- *  @returns { Promise<uint256> }
+ *  @returns { Promise<uint256> } 
  */
 const tokenOfOwnerByIndex = (owner,index) => {
   return new Promise((resolve, reject) => {
@@ -599,10 +501,10 @@ const tokenOfOwnerByIndex = (owner,index) => {
   });
 };
 
-/**
+/** 
  *  Function ( view ): tokenURI
  *  @param { uint256 } tokenId
- *  @returns { Promise<string> }
+ *  @returns { Promise<string> } 
  */
 const tokenURI = (tokenId) => {
   return new Promise((resolve, reject) => {
@@ -618,9 +520,9 @@ const tokenURI = (tokenId) => {
   });
 };
 
-/**
+/** 
  *  Function ( view ): totalSupply
- *  @returns { Promise<uint256> }
+ *  @returns { Promise<uint256> } 
  */
 const totalSupply = () => {
   return new Promise((resolve, reject) => {
@@ -636,7 +538,7 @@ const totalSupply = () => {
   });
 };
 
-/**
+/** 
  *  Function ( nonpayable ): transferFrom
  *  @param { address } from
  *  @param { address } to
@@ -671,7 +573,7 @@ const transferFrom = async (from,to,tokenId) => {
   return function_result;
 };
 
-/**
+/** 
  *  Function ( nonpayable ): transferOwnership
  *  @param { address } newOwner
  */
@@ -704,7 +606,7 @@ const transferOwnership = async (newOwner) => {
   return function_result;
 };
 
-/**
+/** 
  *  Function ( nonpayable ): unpause
  */
 const unpause = async () => {
@@ -789,58 +691,3 @@ transferFrom,
 transferOwnership,
 unpause
 };
-```
-
-# <br> How to call the functions of the generated module?
-
-`import api_bc from './outputAPIFiles/ERC721demo.api.1668783357508.js'`
-
-```
-api_bc.burn('tokenid')
-  .then((ret) => {
-    console.log(ret);
-  })
-  .catch(err => {
-    console.error(err);
-  })
-```
-
-# <br> How to use this module with HardHat?
-
-<br>Import HardHat module
-<br>`const hre = require("hardhat");`
-
-<br>Connect to your smartcontract
-<br>`const scName = await hre.ethers.getContractFactory("<YourSCName>");`
-
-<br>Use generator
-<br>**Note another way of passing abi to the generator. Here we use the smartcontract interface known from the ethers.js library**
-<br>
-
-```
-(async () => {
-        const apiGen = await import('smartcontract-api-generator');
-        apiGen.scAPIGenerator({
-            name: 'YourSCName',
-            abi: Object.entries(scName.interface.functions).map(el => el[1]),
-            address: 'SetContractAddress',
-            ownerPrivateKey: 'SetYourPrivateKey',
-        }, {
-            chain: 'Chain name',
-            RPCURL: 'Network address',
-            gasLimitFactor: 1.2,
-            gasPriceFactor: 1.5,
-        }, {});
-    })()
-```
-
-# <br>Problems
-
-This is the early version of the project and although it has been tested you are likely to encounter problems. <br>
-Let me know if you encounter any problems other than those described below or have ideas for changes to the module.
-
-1. Error 'Invalid sender'. Occurs if an incorrect Blockchain network name has been entered or smartcontract has not been deployed on the entered network.
-
-# <br> Collaboration
-
-If you already have your public projects, have ideas for development and would like to develop this package then I encourage you to collaborate.
