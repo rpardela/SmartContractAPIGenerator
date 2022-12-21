@@ -2,9 +2,9 @@
    Script generated automatically from the NPM smartcontract-api-generator package.
 
    Used contract: ERC721Demo
-   Package version: 1.0.0
+   Package version: 1.1.0
    API framework: WEB3
-   Date of file generation: 11/25/2022, 12:09:04 PM
+   Date of file generation: 12/21/2022, 1:23:24 PM
 */
 
 let Web3;
@@ -17,8 +17,8 @@ let ethereumjs_common;
   ethereumjs_common = await import("@ethereumjs/common");
 })();
 
-const chain = "PolygonMumbai";
-const Common = ethereumjs_common.default;
+const chain = "Mainnet";
+const Common = ethereumjs_common.Common;
 let common;
 
 if (Object.values(ethereumjs_common.Chain).includes(chain)) {
@@ -28,17 +28,206 @@ if (Object.values(ethereumjs_common.Chain).includes(chain)) {
 }
 
 const config = {
-  bcRPCURL: "https://matic-mumbai.chainstacklabs.com",
+  bcURL: "wss://eth-mainnet.g.alchemy.com/",
   gasLimitFactor: 1.2,
   gasPriceFactor: 1.5,
   contractAddress: "SetContractAddress",
   ownerPrivateKey: "SetYourPrivateKey"
 }
+
 const contractABI = [{ "inputs": [], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "approved", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "tokenId", "type": "uint256" }], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "operator", "type": "address" }, { "indexed": false, "internalType": "bool", "name": "approved", "type": "bool" }], "name": "ApprovalForAll", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }], "name": "OwnershipTransferred", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "account", "type": "address" }], "name": "Paused", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "tokenId", "type": "uint256" }], "name": "Transfer", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "address", "name": "account", "type": "address" }], "name": "Unpaused", "type": "event" }, { "inputs": [{ "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "tokenId", "type": "uint256" }], "name": "approve", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }], "name": "balanceOf", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "tokenId", "type": "uint256" }], "name": "burn", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "tokenId", "type": "uint256" }], "name": "getApproved", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "address", "name": "operator", "type": "address" }], "name": "isApprovedForAll", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "name", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "tokenId", "type": "uint256" }], "name": "ownerOf", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "pause", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "paused", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "renounceOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "tokenId", "type": "uint256" }, { "internalType": "string", "name": "uri", "type": "string" }], "name": "safeMint", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "from", "type": "address" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "tokenId", "type": "uint256" }], "name": "safeTransferFrom", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "from", "type": "address" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "tokenId", "type": "uint256" }, { "internalType": "bytes", "name": "data", "type": "bytes" }], "name": "safeTransferFrom", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "operator", "type": "address" }, { "internalType": "bool", "name": "approved", "type": "bool" }], "name": "setApprovalForAll", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }], "name": "supportsInterface", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "symbol", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "index", "type": "uint256" }], "name": "tokenByIndex", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "uint256", "name": "index", "type": "uint256" }], "name": "tokenOfOwnerByIndex", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "tokenId", "type": "uint256" }], "name": "tokenURI", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalSupply", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "from", "type": "address" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "tokenId", "type": "uint256" }], "name": "transferFrom", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }], "name": "transferOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "unpause", "outputs": [], "stateMutability": "nonpayable", "type": "function" }];
-const web3Provider = new Web3(new Web3.providers.HttpProvider(config.bcRPCURL));
+const web3Provider = new Web3(new Web3.providers.WebsocketProvider(config.bcURL));
 const contract = new web3Provider.eth.Contract(contractABI, config.contractAddress);
 contract.setProvider(web3Provider);
 web3Provider.eth.defaultAccount = web3Provider.eth.accounts.privateKeyToAccount(config.ownerPrivateKey).address;
+contract.defaultAccount = web3Provider.eth.defaultAccount;
+
+/** 
+ *  Event : Approval
+ *  @param { address } owner
+ *  @param { address } approved
+ *  @param { uint256 } tokenId
+ */
+const Approval = () => {
+
+  const optionsEv = {
+    fromBlock: "latest"
+  }
+
+  contract.events.Approval(optionsEv)
+    .on("connected", (result) => {
+      console.log("Event: Approval (connected)");
+      console.log(result);
+    })
+    .on("data", (data) => {
+      console.log("Event: Approval (data)");
+      console.log(data);
+    })
+    .on("changed", (result) => {
+      console.log("Event: Approval (changed)");
+      console.log(result);
+    })
+    .on("error", (err) => {
+      console.error("Event: Approval (error)");
+      console.error(err);
+    });
+
+};
+
+/** 
+ *  Event : ApprovalForAll
+ *  @param { address } owner
+ *  @param { address } operator
+ *  @param { bool } approved
+ */
+const ApprovalForAll = () => {
+
+  const optionsEv = {
+    fromBlock: "latest"
+  }
+
+  contract.events.ApprovalForAll(optionsEv)
+    .on("connected", (result) => {
+      console.log("Event: ApprovalForAll (connected)");
+      console.log(result);
+    })
+    .on("data", (data) => {
+      console.log("Event: ApprovalForAll (data)");
+      console.log(data);
+    })
+    .on("changed", (result) => {
+      console.log("Event: ApprovalForAll (changed)");
+      console.log(result);
+    })
+    .on("error", (err) => {
+      console.error("Event: ApprovalForAll (error)");
+      console.error(err);
+    });
+
+};
+
+/** 
+ *  Event : OwnershipTransferred
+ *  @param { address } previousOwner
+ *  @param { address } newOwner
+ */
+const OwnershipTransferred = () => {
+
+  const optionsEv = {
+    fromBlock: "latest"
+  }
+
+  contract.events.OwnershipTransferred(optionsEv)
+    .on("connected", (result) => {
+      console.log("Event: OwnershipTransferred (connected)");
+      console.log(result);
+    })
+    .on("data", (data) => {
+      console.log("Event: OwnershipTransferred (data)");
+      console.log(data);
+    })
+    .on("changed", (result) => {
+      console.log("Event: OwnershipTransferred (changed)");
+      console.log(result);
+    })
+    .on("error", (err) => {
+      console.error("Event: OwnershipTransferred (error)");
+      console.error(err);
+    });
+
+};
+
+/** 
+ *  Event : Paused
+ *  @param { address } account
+ */
+const Paused = () => {
+
+  const optionsEv = {
+    fromBlock: "latest"
+  }
+
+  contract.events.Paused(optionsEv)
+    .on("connected", (result) => {
+      console.log("Event: Paused (connected)");
+      console.log(result);
+    })
+    .on("data", (data) => {
+      console.log("Event: Paused (data)");
+      console.log(data);
+    })
+    .on("changed", (result) => {
+      console.log("Event: Paused (changed)");
+      console.log(result);
+    })
+    .on("error", (err) => {
+      console.error("Event: Paused (error)");
+      console.error(err);
+    });
+
+};
+
+/** 
+ *  Event : Transfer
+ *  @param { address } from
+ *  @param { address } to
+ *  @param { uint256 } tokenId
+ */
+const Transfer = () => {
+
+  const optionsEv = {
+    fromBlock: "latest"
+  }
+
+  contract.events.Transfer(optionsEv)
+    .on("connected", (result) => {
+      console.log("Event: Transfer (connected)");
+      console.log(result);
+    })
+    .on("data", (data) => {
+      console.log("Event: Transfer (data)");
+      console.log(data);
+    })
+    .on("changed", (result) => {
+      console.log("Event: Transfer (changed)");
+      console.log(result);
+    })
+    .on("error", (err) => {
+      console.error("Event: Transfer (error)");
+      console.error(err);
+    });
+
+};
+
+/** 
+ *  Event : Unpaused
+ *  @param { address } account
+ */
+const Unpaused = () => {
+
+  const optionsEv = {
+    fromBlock: "latest"
+  }
+
+  contract.events.Unpaused(optionsEv)
+    .on("connected", (result) => {
+      console.log("Event: Unpaused (connected)");
+      console.log(result);
+    })
+    .on("data", (data) => {
+      console.log("Event: Unpaused (data)");
+      console.log(data);
+    })
+    .on("changed", (result) => {
+      console.log("Event: Unpaused (changed)");
+      console.log(result);
+    })
+    .on("error", (err) => {
+      console.error("Event: Unpaused (error)");
+      console.error(err);
+    });
+
+};
 
 /** 
  *  Function ( nonpayable ): approve
@@ -53,6 +242,7 @@ const approve = async (to, tokenId) => {
   const txBuilder = contract.methods.approve(to, tokenId);
   const encodedTx = txBuilder.encodeABI();
   const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);
+
   const rawTx = {
     nonce: web3Provider.utils.toHex(count),
     gasPrice: gasPrice,
@@ -69,9 +259,11 @@ const approve = async (to, tokenId) => {
   return new Promise((resolve, reject) => {
     web3Provider.eth.sendSignedTransaction("0x" + serializedTx.toString("hex"))
       .on("receipt", (receipt) => {
+        console.log("receipt");
         console.log(receipt);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmation");
         console.log(receipt);
         console.log(confirmationNumber);
         resolve(receipt);
@@ -81,6 +273,7 @@ const approve = async (to, tokenId) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -100,6 +293,7 @@ const balanceOf = (owner) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -114,6 +308,7 @@ const burn = async (tokenId) => {
   const txBuilder = contract.methods.burn(tokenId);
   const encodedTx = txBuilder.encodeABI();
   const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);
+
   const rawTx = {
     nonce: web3Provider.utils.toHex(count),
     gasPrice: gasPrice,
@@ -130,9 +325,11 @@ const burn = async (tokenId) => {
   return new Promise((resolve, reject) => {
     web3Provider.eth.sendSignedTransaction("0x" + serializedTx.toString("hex"))
       .on("receipt", (receipt) => {
+        console.log("receipt");
         console.log(receipt);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmation");
         console.log(receipt);
         console.log(confirmationNumber);
         resolve(receipt);
@@ -142,6 +339,7 @@ const burn = async (tokenId) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -161,6 +359,7 @@ const getApproved = (tokenId) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -181,6 +380,7 @@ const isApprovedForAll = (owner, operator) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -199,6 +399,7 @@ const name = () => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -217,6 +418,7 @@ const owner = () => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -236,6 +438,7 @@ const ownerOf = (tokenId) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -249,6 +452,7 @@ const pause = async () => {
   const txBuilder = contract.methods.pause();
   const encodedTx = txBuilder.encodeABI();
   const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);
+
   const rawTx = {
     nonce: web3Provider.utils.toHex(count),
     gasPrice: gasPrice,
@@ -265,9 +469,11 @@ const pause = async () => {
   return new Promise((resolve, reject) => {
     web3Provider.eth.sendSignedTransaction("0x" + serializedTx.toString("hex"))
       .on("receipt", (receipt) => {
+        console.log("receipt");
         console.log(receipt);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmation");
         console.log(receipt);
         console.log(confirmationNumber);
         resolve(receipt);
@@ -277,6 +483,7 @@ const pause = async () => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -295,6 +502,7 @@ const paused = () => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -308,6 +516,7 @@ const renounceOwnership = async () => {
   const txBuilder = contract.methods.renounceOwnership();
   const encodedTx = txBuilder.encodeABI();
   const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);
+
   const rawTx = {
     nonce: web3Provider.utils.toHex(count),
     gasPrice: gasPrice,
@@ -324,9 +533,11 @@ const renounceOwnership = async () => {
   return new Promise((resolve, reject) => {
     web3Provider.eth.sendSignedTransaction("0x" + serializedTx.toString("hex"))
       .on("receipt", (receipt) => {
+        console.log("receipt");
         console.log(receipt);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmation");
         console.log(receipt);
         console.log(confirmationNumber);
         resolve(receipt);
@@ -336,6 +547,7 @@ const renounceOwnership = async () => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -352,6 +564,7 @@ const safeMint = async (to, tokenId, uri) => {
   const txBuilder = contract.methods.safeMint(to, tokenId, uri);
   const encodedTx = txBuilder.encodeABI();
   const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);
+
   const rawTx = {
     nonce: web3Provider.utils.toHex(count),
     gasPrice: gasPrice,
@@ -368,9 +581,11 @@ const safeMint = async (to, tokenId, uri) => {
   return new Promise((resolve, reject) => {
     web3Provider.eth.sendSignedTransaction("0x" + serializedTx.toString("hex"))
       .on("receipt", (receipt) => {
+        console.log("receipt");
         console.log(receipt);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmation");
         console.log(receipt);
         console.log(confirmationNumber);
         resolve(receipt);
@@ -380,16 +595,17 @@ const safeMint = async (to, tokenId, uri) => {
         reject(err);
       })
   });
+
 };
 
 /** 
- *  Function ( nonpayable ): safeTransferFrom_178
+ *  Function ( nonpayable ): safeTransferFrom_526
  *  Function duplicated. Smartcontract function name: safeTransferFrom
  *  @param { address } from
  *  @param { address } to
  *  @param { uint256 } tokenId
  */
-const safeTransferFrom_178 = async (from, to, tokenId) => {
+const safeTransferFrom_526 = async (from, to, tokenId) => {
 
   const gasPrice = Math.round(await web3Provider.eth.getGasPrice() * config.gasPriceFactor);
   const estGas = await contract.methods.safeTransferFrom(from, to, tokenId).estimateGas();
@@ -397,6 +613,7 @@ const safeTransferFrom_178 = async (from, to, tokenId) => {
   const txBuilder = contract.methods.safeTransferFrom(from, to, tokenId);
   const encodedTx = txBuilder.encodeABI();
   const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);
+
   const rawTx = {
     nonce: web3Provider.utils.toHex(count),
     gasPrice: gasPrice,
@@ -413,9 +630,11 @@ const safeTransferFrom_178 = async (from, to, tokenId) => {
   return new Promise((resolve, reject) => {
     web3Provider.eth.sendSignedTransaction("0x" + serializedTx.toString("hex"))
       .on("receipt", (receipt) => {
+        console.log("receipt");
         console.log(receipt);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmation");
         console.log(receipt);
         console.log(confirmationNumber);
         resolve(receipt);
@@ -425,17 +644,18 @@ const safeTransferFrom_178 = async (from, to, tokenId) => {
         reject(err);
       })
   });
+
 };
 
 /** 
- *  Function ( nonpayable ): safeTransferFrom_810
+ *  Function ( nonpayable ): safeTransferFrom_4
  *  Function duplicated. Smartcontract function name: safeTransferFrom
  *  @param { address } from
  *  @param { address } to
  *  @param { uint256 } tokenId
  *  @param { bytes } data
  */
-const safeTransferFrom_810 = async (from, to, tokenId, data) => {
+const safeTransferFrom_4 = async (from, to, tokenId, data) => {
 
   const gasPrice = Math.round(await web3Provider.eth.getGasPrice() * config.gasPriceFactor);
   const estGas = await contract.methods.safeTransferFrom(from, to, tokenId, data).estimateGas();
@@ -443,6 +663,7 @@ const safeTransferFrom_810 = async (from, to, tokenId, data) => {
   const txBuilder = contract.methods.safeTransferFrom(from, to, tokenId, data);
   const encodedTx = txBuilder.encodeABI();
   const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);
+
   const rawTx = {
     nonce: web3Provider.utils.toHex(count),
     gasPrice: gasPrice,
@@ -459,9 +680,11 @@ const safeTransferFrom_810 = async (from, to, tokenId, data) => {
   return new Promise((resolve, reject) => {
     web3Provider.eth.sendSignedTransaction("0x" + serializedTx.toString("hex"))
       .on("receipt", (receipt) => {
+        console.log("receipt");
         console.log(receipt);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmation");
         console.log(receipt);
         console.log(confirmationNumber);
         resolve(receipt);
@@ -471,6 +694,7 @@ const safeTransferFrom_810 = async (from, to, tokenId, data) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -486,6 +710,7 @@ const setApprovalForAll = async (operator, approved) => {
   const txBuilder = contract.methods.setApprovalForAll(operator, approved);
   const encodedTx = txBuilder.encodeABI();
   const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);
+
   const rawTx = {
     nonce: web3Provider.utils.toHex(count),
     gasPrice: gasPrice,
@@ -502,9 +727,11 @@ const setApprovalForAll = async (operator, approved) => {
   return new Promise((resolve, reject) => {
     web3Provider.eth.sendSignedTransaction("0x" + serializedTx.toString("hex"))
       .on("receipt", (receipt) => {
+        console.log("receipt");
         console.log(receipt);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmation");
         console.log(receipt);
         console.log(confirmationNumber);
         resolve(receipt);
@@ -514,6 +741,7 @@ const setApprovalForAll = async (operator, approved) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -533,6 +761,7 @@ const supportsInterface = (interfaceId) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -551,6 +780,7 @@ const symbol = () => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -570,6 +800,7 @@ const tokenByIndex = (index) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -590,6 +821,7 @@ const tokenOfOwnerByIndex = (owner, index) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -609,6 +841,7 @@ const tokenURI = (tokenId) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -627,6 +860,7 @@ const totalSupply = () => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -643,6 +877,7 @@ const transferFrom = async (from, to, tokenId) => {
   const txBuilder = contract.methods.transferFrom(from, to, tokenId);
   const encodedTx = txBuilder.encodeABI();
   const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);
+
   const rawTx = {
     nonce: web3Provider.utils.toHex(count),
     gasPrice: gasPrice,
@@ -659,9 +894,11 @@ const transferFrom = async (from, to, tokenId) => {
   return new Promise((resolve, reject) => {
     web3Provider.eth.sendSignedTransaction("0x" + serializedTx.toString("hex"))
       .on("receipt", (receipt) => {
+        console.log("receipt");
         console.log(receipt);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmation");
         console.log(receipt);
         console.log(confirmationNumber);
         resolve(receipt);
@@ -671,6 +908,7 @@ const transferFrom = async (from, to, tokenId) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -685,6 +923,7 @@ const transferOwnership = async (newOwner) => {
   const txBuilder = contract.methods.transferOwnership(newOwner);
   const encodedTx = txBuilder.encodeABI();
   const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);
+
   const rawTx = {
     nonce: web3Provider.utils.toHex(count),
     gasPrice: gasPrice,
@@ -701,9 +940,11 @@ const transferOwnership = async (newOwner) => {
   return new Promise((resolve, reject) => {
     web3Provider.eth.sendSignedTransaction("0x" + serializedTx.toString("hex"))
       .on("receipt", (receipt) => {
+        console.log("receipt");
         console.log(receipt);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmation");
         console.log(receipt);
         console.log(confirmationNumber);
         resolve(receipt);
@@ -713,6 +954,7 @@ const transferOwnership = async (newOwner) => {
         reject(err);
       })
   });
+
 };
 
 /** 
@@ -726,6 +968,7 @@ const unpause = async () => {
   const txBuilder = contract.methods.unpause();
   const encodedTx = txBuilder.encodeABI();
   const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);
+
   const rawTx = {
     nonce: web3Provider.utils.toHex(count),
     gasPrice: gasPrice,
@@ -742,9 +985,11 @@ const unpause = async () => {
   return new Promise((resolve, reject) => {
     web3Provider.eth.sendSignedTransaction("0x" + serializedTx.toString("hex"))
       .on("receipt", (receipt) => {
+        console.log("receipt");
         console.log(receipt);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmation");
         console.log(receipt);
         console.log(confirmationNumber);
         resolve(receipt);
@@ -754,9 +999,16 @@ const unpause = async () => {
         reject(err);
       })
   });
+
 };
 
 export default {
+  Approval,
+  ApprovalForAll,
+  OwnershipTransferred,
+  Paused,
+  Transfer,
+  Unpaused,
   approve,
   balanceOf,
   burn,
@@ -769,8 +1021,8 @@ export default {
   paused,
   renounceOwnership,
   safeMint,
-  safeTransferFrom_178,
-  safeTransferFrom_810,
+  safeTransferFrom_526,
+  safeTransferFrom_4,
   setApprovalForAll,
   supportsInterface,
   symbol,
@@ -784,6 +1036,12 @@ export default {
 };
 
 export {
+  Approval,
+  ApprovalForAll,
+  OwnershipTransferred,
+  Paused,
+  Transfer,
+  Unpaused,
   approve,
   balanceOf,
   burn,
@@ -796,8 +1054,8 @@ export {
   paused,
   renounceOwnership,
   safeMint,
-  safeTransferFrom_178,
-  safeTransferFrom_810,
+  safeTransferFrom_526,
+  safeTransferFrom_4,
   setApprovalForAll,
   supportsInterface,
   symbol,

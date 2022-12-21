@@ -10,9 +10,9 @@ apiGen.scAPIGenerator({
     ownerPrivateKey: 'SetYourPrivateKey',
 }, {
     chain: 'Mainnet',
-    RPCURL: 'https://matic-mumbai.chainstacklabs.com',
+    URL: 'wss://eth-mainnet.g.alchemy.com/',
     gasLimitFactor: 1.2,
     gasPriceFactor: 1.5,
-}, {});// apiFramework: 'WEB3', 'ETHERS
+}, { apiFramework: 'WEB3' });// apiFramework: 'WEB3', 'ETHERS'
 
 console.log(apiGen.getVersion());

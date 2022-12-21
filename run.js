@@ -1,4 +1,3 @@
-import api from './outputAPIFiles/ERC721demo.api.1669025129888.js';
+import api from './outputAPIFiles/ERC721Demo.api.1671359431964';
 
 console.log(api);
-api.balanceOf

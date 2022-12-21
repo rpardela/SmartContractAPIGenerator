@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 
-let version = '1.0.0';
+let version = '1.1.0';
 let name = 'SmartContractAPIGenerator';
 
 enum PROVIDERS {
@@ -35,7 +35,7 @@ type SmartContractConfig = {
 
 type BCNetworkConfig = {
     chain: CHAIN;
-    RPCURL: string;    
+    URL: string;    
     gasLimitFactor: number;
     gasPriceFactor: number;
 }
@@ -117,6 +117,9 @@ const generateAPIFile = (abi, scConfig: SmartContractConfig, bcConfig: BCNetwork
                 default:
                     break;
             }
+        } 
+        else if (el.type === 'event') {
+            saveEventFunction(config, el.name, el.inputs);
         }
     });
 
@@ -166,14 +169,14 @@ const saveApiConfigETHERS = (scConfig: SmartContractConfig, bcConfig: BCNetworkC
 
     let sFuncStart: string = 
     '\nconst config = {' + '\n'
-    + '  bcRPCURL: "' + bcConfig.RPCURL + '",' + '\n'
+    + '  bcURL: "' + bcConfig.URL + '",' + '\n'
     + '  gasLimitFactor: ' + bcConfig.gasLimitFactor + ',' + '\n'
     + '  gasPriceFactor: ' + bcConfig.gasPriceFactor + ',' + '\n'
     + '  contractAddress: "' + scConfig.address + '",' + '\n'
     + '  ownerPrivateKey: "' + scConfig.ownerPrivateKey + '"' + '\n'
     ;    
 
-    let sFuncFinish: string = '}' + '\n'
+    let sFuncFinish: string = '}' + '\n' + '\n'
 
     fs.appendFileSync(outputFileName, sFuncStart);
     fs.appendFileSync(outputFileName, sFuncFinish);
@@ -181,7 +184,8 @@ const saveApiConfigETHERS = (scConfig: SmartContractConfig, bcConfig: BCNetworkC
     let sABI = '\const contractABI = ' + JSON.stringify(abi) + ';\n';
     fs.appendFileSync(outputFileName, sABI);
 
-    let sHttpProvider = 'const bcHttpProvider = new ethers.providers.JsonRpcProvider(config.bcRPCURL);\n'
+    // let sHttpProvider = 'const bcHttpProvider = new ethers.providers.JsonRpcProvider(config.bcRPCURL);\n'
+    let sHttpProvider = 'const bcHttpProvider = new ethers.providers.WebSocketProvider(config.bcURL);\n'
     fs.appendFileSync(outputFileName, sHttpProvider);
 
     let sWallet = 'const wallet = new ethers.Wallet(config.ownerPrivateKey, bcHttpProvider' + ');\n';        
@@ -209,7 +213,7 @@ const saveApiConfigWEB3 = (scConfig: SmartContractConfig, bcConfig: BCNetworkCon
 
     let setChain = 
     '\nconst chain = "' + bcConfig.chain + '";' + '\n'
-    + 'const Common = ethereumjs_common.default;' +'\n'
+    + 'const Common = ethereumjs_common.Common;' +'\n'
     + 'let common;' +'\n'
     + '\nif (Object.values(ethereumjs_common.Chain).includes(chain)) {' +'\n'
     +   '  common = Common.custom(ethereumjs_common.Chain[chain])' + '\n'
@@ -220,14 +224,14 @@ const saveApiConfigWEB3 = (scConfig: SmartContractConfig, bcConfig: BCNetworkCon
     
     let sFuncStart: string = 
     '\nconst config = {' + '\n'
-    + '  bcRPCURL: "' + bcConfig.RPCURL + '",' + '\n'
+    + '  bcURL: "' + bcConfig.URL + '",' + '\n'
     + '  gasLimitFactor: ' + bcConfig.gasLimitFactor + ',' + '\n'
     + '  gasPriceFactor: ' + bcConfig.gasPriceFactor + ',' + '\n'
     + '  contractAddress: "' + scConfig.address + '",' + '\n'
     + '  ownerPrivateKey: "' + scConfig.ownerPrivateKey + '"' + '\n'
     ;    
 
-    let sFuncFinish: string = '}' + '\n'
+    let sFuncFinish: string = '}' + '\n' + '\n'
     
     fs.appendFileSync(outputFileName, sFuncStart);
     fs.appendFileSync(outputFileName, sFuncFinish);
@@ -235,7 +239,8 @@ const saveApiConfigWEB3 = (scConfig: SmartContractConfig, bcConfig: BCNetworkCon
     let sABI = '\const contractABI = ' + JSON.stringify(abi) + ';\n';
     fs.appendFileSync(outputFileName, sABI);
 
-    let sHttpProvider = 'const web3Provider = new Web3(new Web3.providers.HttpProvider(config.bcRPCURL));\n'
+    // let sHttpProvider = 'const web3Provider = new Web3(new Web3.providers.HttpProvider(config.bcURL));\n'
+    let sHttpProvider = 'const web3Provider = new Web3(new Web3.providers.WebsocketProvider(config.bcURL));\n'
     fs.appendFileSync(outputFileName, sHttpProvider);
 
     let sContract = 'const contract = new web3Provider.eth.Contract(contractABI, config.contractAddress' + ');\n';        
@@ -244,7 +249,10 @@ const saveApiConfigWEB3 = (scConfig: SmartContractConfig, bcConfig: BCNetworkCon
     let contractProvider = 'contract.setProvider(web3Provider);\n';
     fs.appendFileSync(outputFileName, contractProvider);
     
-    let contractAccount = 'web3Provider.eth.defaultAccount = web3Provider.eth.accounts.privateKeyToAccount(config.ownerPrivateKey).address;\n';
+    let providerAccount = 'web3Provider.eth.defaultAccount = web3Provider.eth.accounts.privateKeyToAccount(config.ownerPrivateKey).address;\n';
+    fs.appendFileSync(outputFileName, providerAccount);
+
+    let contractAccount = 'contract.defaultAccount = web3Provider.eth.defaultAccount;' + '\n';
     fs.appendFileSync(outputFileName, contractAccount);
 }
 
@@ -275,6 +283,111 @@ const setFunctionHeader = (_name: string, _stateMutalibility: string, _duplicate
     return [scFunctionComment, funcName];
 }
 
+const saveEventFunction = (config: GeneratorOptions, _name: string, _parmsIn:[]) => {
+    switch (config.apiFramework) {
+        case PROVIDERS.WEB3:
+            saveEventFunctionWEB3(_name, _parmsIn)
+            break;
+        case PROVIDERS.ETHERS:
+        default:
+            saveEventFunctionETHERS(_name, _parmsIn)
+            break;
+    }
+};
+
+
+const setEventFunctionHeader = (_name: string, _parmsIn:[]): [string, string] => {
+    let funcName = _name;
+    let scFunctionComment = 
+        '\n/** \n' 
+        + ' *  Event : ' + funcName + '\n'        
+    _parmsIn.map((param: any) => {
+        scFunctionComment += ' *  @param { ' + param.type + ' } ' + param.name + '\n';
+    });    
+    scFunctionComment += ' */\n';
+
+    return [scFunctionComment, funcName];
+}
+
+const writeEventLog = (_parmsIn) => {
+    let ret = '';
+    _parmsIn.map(el => {
+        ret += '    console.log(' + el.name + '); \n';
+    })
+
+    return ret;
+}
+
+const saveEventFunctionETHERS = (_name: string, _parmsIn:[]) => {
+    let parmsIn = parmsToString(_parmsIn);
+    let info = setEventFunctionHeader(_name, _parmsIn);
+
+    let scFunctionComment = info[0];
+    let funcName = info[1];
+
+    let scFunctionStart = 
+        'const ' + funcName + ' = () => {' + '\n' + '\n';
+    let scFunctionEnd = '\n' + '};' + '\n';
+
+    let scFunctionBody = 
+          '  contract.on("' + _name + '", ('+ parmsIn +') => {' + '\n'
+        + '    console.log("Event: ' + _name + '")' + '\n'  
+        + writeEventLog(_parmsIn)
+        + '  });' + '\n'
+        
+        fs.appendFileSync(outputFileName, scFunctionComment);        
+        fs.appendFileSync(outputFileName, scFunctionStart);
+        fs.appendFileSync(outputFileName, scFunctionBody);
+        fs.appendFileSync(outputFileName, scFunctionEnd);
+
+        functionList += '\n' + funcName + ',';
+};
+
+const saveEventFunctionWEB3 = (_name: string, _parmsIn:[]) => {
+    //let parmsIn = parmsToString(_parmsIn);
+    let info = setEventFunctionHeader(_name, _parmsIn);
+
+    let scFunctionComment = info[0];
+    let funcName = info[1];
+
+    let scOptionsEvent = 
+      '  const optionsEv = {' + '\n'
+    + '    fromBlock: "latest"' + '\n'
+    + '  }' + '\n' + '\n';
+
+    let scFunctionStart = 
+        'const ' + funcName + ' = () => {' + '\n' + '\n';
+    let scFunctionEnd = '\n' + '};' + '\n';
+
+    let scFunctionBody = 
+          '  contract.events.' + _name + '(optionsEv)' + '\n'
+        + '    .on("connected", (result) => {' + '\n'
+        + '        console.log("Event: ' + _name + ' (connected)");' + '\n'        
+        + '        console.log(result);' + '\n'        
+        + '    })' + '\n'
+        + '    .on("data", (data) => {' + '\n'
+        + '        console.log("Event: ' + _name + ' (data)");' + '\n'        
+        + '        console.log(data);' + '\n'        
+        + '    })' + '\n'
+        + '    .on("changed", (result) => {' + '\n'
+        + '        console.log("Event: ' + _name + ' (changed)");' + '\n'        
+        + '        console.log(result);' + '\n'        
+        + '    })' + '\n'
+        + '    .on("error", (err) => {' + '\n'
+        + '        console.error("Event: ' + _name + ' (error)");' + '\n'        
+        + '        console.error(err);' + '\n'
+        + '    });' + '\n'
+        
+        fs.appendFileSync(outputFileName, scFunctionComment);        
+        fs.appendFileSync(outputFileName, scFunctionStart);
+        fs.appendFileSync(outputFileName, scOptionsEvent);
+        fs.appendFileSync(outputFileName, scFunctionBody);
+        fs.appendFileSync(outputFileName, scFunctionEnd);
+
+        functionList += '\n' + funcName + ',';
+};
+
+
 const saveNoGasFunction = (config: GeneratorOptions, _name: string, _stateMutability: string, _duplicated: number, _parmsIn:[], _parmsOut:[]) => {
     switch (config.apiFramework) {
         case PROVIDERS.WEB3:
@@ -297,7 +410,7 @@ const saveNoGasFunctionETHERS = (_name: string, _stateMutability: string, _dupli
 
     let scFunctionStart = 
         'const ' + funcName + ' = (' + parmsIn + ') => {' + '\n';
-    let scFunctionEnd = '};' + '\n';
+    let scFunctionEnd = '\n' + '};' + '\n';
 
     let scFunctionBody = 
           '  return new Promise((resolve, reject) => {' + '\n'
@@ -329,7 +442,7 @@ const saveNoGasFunctionWEB3 = (_name: string, _stateMutability: string, _duplica
 
     let scFunctionStart = 
         'const ' + funcName + ' = (' + parmsIn + ') => {' + '\n';
-    let scFunctionEnd = '};' + '\n';
+    let scFunctionEnd = '\n' + '};' + '\n';
 
     let scFunctionBody = 
           '  return new Promise((resolve, reject) => {' + '\n'
@@ -374,7 +487,7 @@ const saveGasFunctionETHERS = (_name: string, _stateMutalibility: string, _dupli
 
     let scFunctionStart = 
         'const ' + funcName + ' = async (' + parmsIn + ') => {' + '\n';
-    let scFunctionEnd = '};' + '\n';
+    let scFunctionEnd = '\n' + '};' + '\n';
     let resultDef = '  let function_result = "";';
     let estimateGas = 
       '\n  let gasPrice = Math.round(await bcHttpProvider.getGasPrice() * config.gasPriceFactor);'
@@ -424,36 +537,38 @@ const saveGasFunctionWEB3 = (_name: string, _stateMutalibility: string, _duplica
 
     let scFunctionStart = 
         'const ' + funcName + ' = async (' + parmsIn + ') => {' + '\n';
-    let scFunctionEnd = '};' + '\n';    
+    let scFunctionEnd = '\n' + '};' + '\n';    
     let estimateGas = 
       '\n  const gasPrice = Math.round(await web3Provider.eth.getGasPrice() * config.gasPriceFactor);'
     + '\n  const estGas = await contract.methods.' + _name + '(' + parmsIn + ').estimateGas();'
     + '\n  const gasLimit = Math.round(estGas * config.gasLimitFactor);'
 
     let scTransaction = 
-        '\nconst txBuilder = contract.methods.' + _name + '(' + parmsIn + ');' + '\n'
-        + 'const encodedTx = txBuilder.encodeABI();' + '\n'
-        + 'const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);' + '\n'
-        + ' const rawTx = {' +'\n'
-        + '   nonce: web3Provider.utils.toHex(count),' + '\n'
-        + '   gasPrice: gasPrice,' + '\n'
-        + '   gasLimit: gasLimit,' + '\n'
-        + '   data: encodedTx,' + '\n'
-        //+ '   from: web3Provider.eth.defaultAccount'
-        + '   to: config.contractAddress' + '\n'
-        + ' };' + '\n'
-        + '\nconst tx = new Tx(rawTx, { common });' + '\n'
-        + 'let privateKey = Buffer.from(config.ownerPrivateKey, "hex");' + '\n'
-        + 'const signedTx = tx.sign(privateKey);' + '\n'
-        + 'const serializedTx = signedTx.serialize();' + '\n'
+      '\n  const txBuilder = contract.methods.' + _name + '(' + parmsIn + ');' + '\n'
+      + '  const encodedTx = txBuilder.encodeABI();' + '\n'
+      + '  const count = await web3Provider.eth.getTransactionCount(web3Provider.eth.defaultAccount);' + '\n' + '\n'
+      + '  const rawTx = {' +'\n'
+      + '    nonce: web3Provider.utils.toHex(count),' + '\n'
+      + '    gasPrice: gasPrice,' + '\n'
+      + '    gasLimit: gasLimit,' + '\n'
+      + '    data: encodedTx,' + '\n'
+    //+ '    from: web3Provider.eth.defaultAccount'
+      + '    to: config.contractAddress' + '\n'
+      + '  };' + '\n'
+    + '\n  const tx = new Tx(rawTx, { common });' + '\n'
+      + '  let privateKey = Buffer.from(config.ownerPrivateKey, "hex");' + '\n'
+      + '  const signedTx = tx.sign(privateKey);' + '\n'
+      + '  const serializedTx = signedTx.serialize();' + '\n'
 
         let scFunctionBody = 
         '\n  return new Promise((resolve, reject) => {' + '\n'
       + '    web3Provider.eth.sendSignedTransaction("0x" + serializedTx.toString("hex"))' + '\n'
       + '      .on("receipt", (receipt) => {' + '\n'
+      + '        console.log("receipt");' + '\n'
       + '        console.log(receipt);' + '\n'
       + '      })' + '\n'
       + '      .on("confirmation", (confirmationNumber, receipt) => {' + '\n'
+      + '        console.log("confirmation");' + '\n'
       + '        console.log(receipt);' + '\n'
       + '        console.log(confirmationNumber);' + '\n'
       + '        resolve(receipt);' + '\n'
